@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>管理系统登录</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            margin-top: 100px;
+        }
+
+        h1 {
+            color: #007bff;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        #login-wrapper {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .loginBtn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .loginBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+    <h1>欢迎登录学生成绩管理系统</h1>
+    <div id="login-wrapper">
+        <form id="loginForm" action="/login" method="post">
+            <label for="username">用户名:</label>
+            <input type="text" id="username" name="username" placeholder="请输入用户名"/>
+
+            <label for="password">密码:</label>
+            <input type="password" id="password" name="password" placeholder="请输入密码"/>
+
+            <input class="loginBtn" type="submit" value="登录">
+        </form>
+    </div>
+</div>
+</body>
+</html>
