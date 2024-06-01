@@ -154,7 +154,7 @@ def update_student():
 
 @app.route('/sort')
 def sort():
-    return
+    return render_template('sort.html')
 
 if __name__ == '__main__':
     app.run()
