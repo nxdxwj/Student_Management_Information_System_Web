@@ -1,57 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>添加学生信息</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f0f0f0;
-    }
-
-    h2 {
-        text-align: center;
-        color: #333;
-    }
-
-    form {
-        max-width: 400px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    label {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    input[type="text"] {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    input[type="submit"] {
-        width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    input[type="submit"]:hover {
-        background-color: #0056b3;
-    }
-</style>
+    <meta charset="UTF-8">
+    <title>添加学生信息</title>
+    <link rel="stylesheet" type="text/css" href="/static/add.css">
 </head>
 <body>
 <h2>添加学生信息</h2>
@@ -78,6 +30,8 @@
     <input type="text" id="python" name="python">
 
     <input type="submit" value="提交">
+
+    <a href="http://127.0.0.1:5000/admin" class="btn">返回Admin页面</a>
 </form>
 </body>
 </html>

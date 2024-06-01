@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>学生信息展示</title>
-    <link rel="stylesheet" type="text/css" href="/static/display.css">
+    <link rel="stylesheet" type="text/css" href="/static/delete.css">
 </head>
 <body>
 <div class="row">
@@ -25,6 +25,7 @@
                             <th>高等数学</th>
                             <th>大学物理</th>
                             <th>Python程序设计基础</th>
+                            <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -33,6 +34,9 @@
                                 {% for j in i %}
                                     <td>{{ j }}</td>
                                 {% endfor %}
+                                <td>
+                                    <button class="delete_button" onclick="deleteStudent({{ i[1] }})">删除</button>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -45,5 +49,29 @@
 
 <a href="http://127.0.0.1:5000/admin" class="btn">返回Admin页面</a>
 
+<script>
+function deleteStudent(studentId) {
+    fetch('/delete_student', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ student_id: studentId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Student deleted successfully!');
+            location.reload(); // 刷新页面以显示更新后的数据
+        } else {
+            alert('Failed to delete student.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+}
+</script>
 </body>
 </html>
