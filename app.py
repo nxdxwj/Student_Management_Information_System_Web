@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import sqlite3
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -60,7 +61,8 @@ def add():
         return redirect(url_for('display'))
     return render_template('add.html')
 
-@app.route('/search',methods = ['GET','POST'])
+
+@app.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
         id = int(request.form['id'])
@@ -69,13 +71,14 @@ def search():
         conn = sqlite3.connect(db)
         cur = conn.cursor()
         sql = 'select * from studentList where 学号=? '
-        cur.execute(sql, (id, ))
+        cur.execute(sql, (id,))
         data = cur.fetchall()
         if data:
             return render_template('display.html', content=data)
     return render_template('search.html')
 
-@app.route('/delete',methods = ['GET','POST'])
+
+@app.route('/delete', methods=['GET', 'POST'])
 def delete():
     db = 'test.db'
     conn = sqlite3.connect(db)
@@ -112,7 +115,8 @@ def delete_student():
     else:
         return jsonify({'success': False, 'error': 'Invalid request method'})  # 返回一个JSON响应，表示删除失败（请求方法无效）
 
-@app.route('/update',methods = ['GET','POST'])
+
+@app.route('/update', methods=['GET', 'POST'])
 def update():
     if request.method == 'POST':
         id = int(request.form['id'])
@@ -121,13 +125,14 @@ def update():
         conn = sqlite3.connect(db)
         cur = conn.cursor()
         sql = 'select * from studentList where 学号=? '
-        cur.execute(sql, (id, ))
+        cur.execute(sql, (id,))
         data = cur.fetchall()
         if data:
             return render_template('update.html', student=data[0])
     return render_template('update_search.html')
 
-@app.route('/update_student',methods = ['POST'])
+
+@app.route('/update_student', methods=['POST'])
 def update_student():
     if request.method == 'POST':
         id = int(request.json.get('student_id'))
@@ -152,9 +157,53 @@ def update_student():
             return jsonify({'success': False, 'error': 'Invalid student_id format'})  # 返回一个JSON响应，表示删除失败（学生ID格式无效）
     return jsonify({'success': False, 'error': 'Invalid request method'})
 
+
 @app.route('/sort')
 def sort():
     return render_template('sort.html')
+
+
+@app.route('/sort/sort_math')
+def sort_math():
+    db = 'test.db'
+    conn = sqlite3.connect(db)
+    cur = conn.cursor()
+    sql = 'select * from studentList'
+    cur.execute(sql)
+    data = cur.fetchall()
+    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    df = pd.DataFrame(data=data, columns=columns)
+    df.sort_values(by="高等数学", ascending=False, inplace=True)
+    data = df.values.tolist()
+    return render_template('display.html',content = data)
+
+@app.route('/sort/sort_physics')
+def sort_physics():
+    db = 'test.db'
+    conn = sqlite3.connect(db)
+    cur = conn.cursor()
+    sql = 'select * from studentList'
+    cur.execute(sql)
+    data = cur.fetchall()
+    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    df = pd.DataFrame(data=data, columns=columns)
+    df.sort_values(by="大学物理", ascending=False, inplace=True)
+    data = df.values.tolist()
+    return render_template('display.html',content = data)
+
+@app.route('/sort/sort_python')
+def sort_python():
+    db = 'test.db'
+    conn = sqlite3.connect(db)
+    cur = conn.cursor()
+    sql = 'select * from studentList'
+    cur.execute(sql)
+    data = cur.fetchall()
+    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    df = pd.DataFrame(data=data, columns=columns)
+    df.sort_values(by="Python程序设计基础", ascending=False, inplace=True)
+    data = df.values.tolist()
+    return render_template('display.html',content = data)
 
 if __name__ == '__main__':
     app.run()
