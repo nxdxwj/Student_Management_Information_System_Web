@@ -12,7 +12,7 @@ def hello_world():  # put application's code here
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    username, password = ["admin", "123456"]
+    username, password = ["admin", "2024"]
     if request.method == 'POST':
         user = request.form.get('username')
         psw = request.form.get('password')
@@ -204,6 +204,28 @@ def sort_python():
     df.sort_values(by="Python程序设计基础", ascending=False, inplace=True)
     data = df.values.tolist()
     return render_template('display.html',content = data)
+
+@app.route('/graph')
+def graph():
+    return render_template('graph.html')
+
+@app.route('/graph/math')
+def graphMath():
+    conn = sqlite3.connect('test.db')
+    cur = conn.cursor()
+    sql = 'select * from studentList'
+    cur.execute(sql)
+    data = cur.fetchall()
+    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    df = pd.DataFrame(data=data,columns=columns)
+    math_score = df["高等数学"].values.tolist()
+    return render_template('graph_math.html',result_json = math_score)
+
+@app.route('/chart')
+def chart():
+    pass
+
+
 
 if __name__ == '__main__':
     app.run()

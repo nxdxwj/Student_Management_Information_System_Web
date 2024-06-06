@@ -50,7 +50,7 @@ tr:hover {
     border-radius: 5px;
     transition: background-color 0.3s;
     position: fixed;
-    bottom: 300px; /* 与底部的距离 */
+    top: 50px; /* 与顶部部的距离 */
     right: 20px; /* 与右侧的距离 */
 }
 
