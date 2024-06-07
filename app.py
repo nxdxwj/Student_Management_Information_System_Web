@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import sqlite3
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from io import BytesIO
+import base64
+from scipy.stats import norm
 
 app = Flask(__name__)
 
@@ -209,6 +214,11 @@ def sort_python():
 def graph():
     return render_template('graph.html')
 
+def normfun(x, mu, sigma):
+    pdf = np.exp(-((x - mu) ** 2) / (2 * sigma ** 2)) / (sigma * np.sqrt(2 * np.pi))
+    return pdf
+
+
 @app.route('/graph/math')
 def graphMath():
     conn = sqlite3.connect('test.db')
@@ -217,13 +227,35 @@ def graphMath():
     cur.execute(sql)
     data = cur.fetchall()
     columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
-    df = pd.DataFrame(data=data,columns=columns)
-    math_score = df["高等数学"].values.tolist()
-    return render_template('graph_math.html',result_json = math_score)
+    df = pd.DataFrame(data=data, columns=columns)
+    math_score = df["高等数学"]
+    mean = math_score.mean()
+    std = math_score.std()
 
-@app.route('/chart')
-def chart():
-    pass
+    plt.subplot(221)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+
+    plt.title('分数分布(5档)')
+    x = np.linspace(0, 100, 1000)
+    y = norm.pdf(x, mean, std)
+    plt.plot(x, y, label='拟合曲线')
+
+    plt.hist(math_score, bins=20, alpha=0.7, color='b', edgecolor='black', density=True)
+    plt.xlabel('分数')
+    plt.ylabel('概率')
+
+    # 将图表保存为PNG图片
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    conn.close()
+
+    # 将图片编码为base64
+    graph = base64.b64encode(image_png).decode('utf-8')
+
+    return render_template('graph_math.html', graph=graph)
 
 
 
