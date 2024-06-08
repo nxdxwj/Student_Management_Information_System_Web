@@ -78,6 +78,8 @@ def search():
         sql = 'select * from studentList where 学号=? '
         cur.execute(sql, (id,))
         data = cur.fetchall()
+        cur.close()
+        conn.close()
         if data:
             return render_template('display.html', content=data)
     return render_template('search.html')
@@ -132,6 +134,8 @@ def update():
         sql = 'select * from studentList where 学号=? '
         cur.execute(sql, (id,))
         data = cur.fetchall()
+        cur.close()
+        conn.close()
         if data:
             return render_template('update.html', student=data[0])
     return render_template('update_search.html')
@@ -180,6 +184,9 @@ def sort_math():
     df = pd.DataFrame(data=data, columns=columns)
     df.sort_values(by="高等数学", ascending=False, inplace=True)
     data = df.values.tolist()
+
+    cur.close()
+    conn.close()
     return render_template('display.html',content = data)
 
 @app.route('/sort/sort_physics')
@@ -194,6 +201,9 @@ def sort_physics():
     df = pd.DataFrame(data=data, columns=columns)
     df.sort_values(by="大学物理", ascending=False, inplace=True)
     data = df.values.tolist()
+
+    cur.close()
+    conn.close()
     return render_template('display.html',content = data)
 
 @app.route('/sort/sort_python')
@@ -208,6 +218,9 @@ def sort_python():
     df = pd.DataFrame(data=data, columns=columns)
     df.sort_values(by="Python程序设计基础", ascending=False, inplace=True)
     data = df.values.tolist()
+
+    cur.close()
+    conn.close()
     return render_template('display.html',content = data)
 
 @app.route('/graph')
@@ -219,30 +232,99 @@ def normfun(x, mu, sigma):
     return pdf
 
 
-@app.route('/graph/math')
-def graphMath():
+@app.route('/graph/graph_math')
+def graph_math():
+    # 声明变量
+    a = 0  # 90分以上数量
+    b = 0  # 80-90分以上数量
+    c = 0  # 70-80分以上数量
+    d = 0  # 60-70分以上数量
+    e = 0  # 60分以下数量
+    score_max = 0
+    score_min = 100
+    score_avg = 0
+    score_sum = 0
+
     conn = sqlite3.connect('test.db')
     cur = conn.cursor()
     sql = 'select * from studentList'
     cur.execute(sql)
     data = cur.fetchall()
+
     columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
     df = pd.DataFrame(data=data, columns=columns)
-    math_score = df["高等数学"]
-    mean = math_score.mean()
-    std = math_score.std()
 
+    math_score = df['高等数学']  # 获得分数数据集
+    physics_score = df['大学物理']
+    mean = math_score.mean()  # 获得分数数据集的平均值
+    std = math_score.std()  # 获得分数数据集的标准差
+
+    # 计算分数总和、各分数区间数量统计
+    for i in range(0, len(math_score)):
+        score0 = int(math_score[i])
+        score_sum = score_sum + score0  # 计算分数之和，为求平均数做准备
+        if score0 > score_max:
+            score_max = score0
+        if score0 < score_min:
+            score_min = score0
+        if score0 >= 90:  # 统计90分以上数量
+            a = a + 1
+        elif score0 >= 80:  # 统计80分以上数量
+            b = b + 1
+        elif score0 >= 70:  # 统计70分以上数量
+            c = c + 1
+        elif score0 >= 60:  # 统计60分以上数量
+            d = d + 1
+        else:  # 统计60分以下数量
+            e = e + 1
+
+    score_avg = score_sum / len(math_score)  # 平均分
+    scores = [a, b, c, d, e]  # 分数区间统计
+
+    # 柱形图柱形的宽度
+    bar_width = 0.3
+    # 设定X轴：前两个数字是x轴的起止范围，第三个数字表示步长，步长设定得越小，画出来的正态分布曲线越平滑
+    x = np.arange(0, 100, 1)
+    # 设定Y轴，正态分布函数
+    y = normfun(x, mean, std)
+
+    # 设定柱状图x轴、Y轴数组
+    x3 = np.arange(3)
+    y3 = np.array([score_avg, score_max, score_min])
+
+    # 绘制分数数据集的正态分布曲线和直方图（5分档）
     plt.subplot(221)
     plt.rcParams['font.sans-serif'] = ['SimHei']
-
     plt.title('分数分布(5档)')
-    x = np.linspace(0, 100, 1000)
-    y = norm.pdf(x, mean, std)
-    plt.plot(x, y, label='拟合曲线')
-
-    plt.hist(math_score, bins=20, alpha=0.7, color='b', edgecolor='black', density=True)
+    plt.plot(x, y)
+    plt.hist(math_score, bins=5, rwidth=0.9, density=True)
     plt.xlabel('分数')
     plt.ylabel('概率')
+
+    # 绘制分数数据集的散点图，每个点代表一个学生
+    plt.subplot(222)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('Physics vs Math')
+    plt.scatter(physics_score, math_score, c='blue', alpha=0.5, label='Physics vs Math')
+    plt.xlabel('大学物理')
+    plt.ylabel('高等数学')
+
+    plt.xlim(60, 100)  # Set x-axis range
+    plt.ylim(60, 100)  # Set y-axis range
+
+    # 绘制柱形图
+    plt.subplot(223)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('分数统计')
+    plt.bar(x3, y3, tick_label=['平均分', '最高分', '最低分'], width=bar_width)
+
+    # 绘制饼状图
+    plt.subplot(224)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('分数段饼图')
+    plt.pie(scores, labels=['90分以上', '80-90分', '70-80分', '60-70分', '60分以下'], autopct='%1.1f%%')
+    # 输出四幅图
+    plt.tight_layout()
 
     # 将图表保存为PNG图片
     buffer = BytesIO()
@@ -250,6 +332,7 @@ def graphMath():
     buffer.seek(0)
     image_png = buffer.getvalue()
     buffer.close()
+    cur.close()
     conn.close()
 
     # 将图片编码为base64
@@ -257,6 +340,221 @@ def graphMath():
 
     return render_template('graph_math.html', graph=graph)
 
+@app.route('/graph/graph_physics')
+def graph_physics():
+    # 声明变量
+    a = 0  # 90分以上数量
+    b = 0  # 80-90分以上数量
+    c = 0  # 70-80分以上数量
+    d = 0  # 60-70分以上数量
+    e = 0  # 60分以下数量
+    score_max = 0
+    score_min = 100
+    score_avg = 0
+    score_sum = 0
+
+    conn = sqlite3.connect('test.db')
+    cur = conn.cursor()
+    sql = 'select * from studentList'
+    cur.execute(sql)
+    data = cur.fetchall()
+
+    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    df = pd.DataFrame(data=data, columns=columns)
+    # 获得分数数据集
+    physics_score = df['大学物理']
+    python_score = df["Python程序设计基础"]
+    mean = physics_score.mean()  # 获得分数数据集的平均值
+    std = physics_score.std()  # 获得分数数据集的标准差
+
+    # 计算分数总和、各分数区间数量统计
+    for i in range(0, len(physics_score)):
+        score0 = int(physics_score[i])
+        score_sum = score_sum + score0  # 计算分数之和，为求平均数做准备
+        if score0 > score_max:
+            score_max = score0
+        if score0 < score_min:
+            score_min = score0
+        if score0 >= 90:  # 统计90分以上数量
+            a = a + 1
+        elif score0 >= 80:  # 统计80分以上数量
+            b = b + 1
+        elif score0 >= 70:  # 统计70分以上数量
+            c = c + 1
+        elif score0 >= 60:  # 统计60分以上数量
+            d = d + 1
+        else:  # 统计60分以下数量
+            e = e + 1
+
+    score_avg = score_sum / len(physics_score)  # 平均分
+    scores = [a, b, c, d, e]  # 分数区间统计
+
+    # 柱形图柱形的宽度
+    bar_width = 0.3
+    # 设定X轴：前两个数字是x轴的起止范围，第三个数字表示步长，步长设定得越小，画出来的正态分布曲线越平滑
+    x = np.arange(0, 100, 1)
+    # 设定Y轴，正态分布函数
+    y = normfun(x, mean, std)
+
+    # 设定柱状图x轴、Y轴数组
+    x3 = np.arange(3)
+    y3 = np.array([score_avg, score_max, score_min])
+
+    # 绘制分数数据集的正态分布曲线和直方图（5分档）
+    plt.subplot(221)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('分数分布(5档)')
+    plt.plot(x, y)
+    plt.hist(physics_score, bins=5, rwidth=0.9, density=True)
+    plt.xlabel('分数')
+    plt.ylabel('概率')
+
+    # 绘制分数数据集的散点图，每个点代表一个学生
+    plt.subplot(222)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('Physics vs Math')
+    plt.scatter(physics_score, python_score, c='blue', alpha=0.5, label='Physics vs Python')
+    plt.xlabel('Python')
+    plt.ylabel('大学物理')
+
+    plt.xlim(60, 100)  # Set x-axis range
+    plt.ylim(60, 100)  # Set y-axis range
+
+    # 绘制柱形图
+    plt.subplot(223)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('分数统计')
+    plt.bar(x3, y3, tick_label=['平均分', '最高分', '最低分'], width=bar_width)
+
+    # 绘制饼状图
+    plt.subplot(224)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('分数段饼图')
+    plt.pie(scores, labels=['90分以上', '80-90分', '70-80分', '60-70分', '60分以下'], autopct='%1.1f%%')
+    # 输出四幅图
+    plt.tight_layout()
+
+    # 将图表保存为PNG图片
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    cur.close()
+    conn.close()
+
+    # 将图片编码为base64
+    graph = base64.b64encode(image_png).decode('utf-8')
+
+    return render_template('graph_physics.html', graph=graph)
+
+@app.route('/graph/graph_python')
+def graph_python():
+    # 声明变量
+    a = 0  # 90分以上数量
+    b = 0  # 80-90分以上数量
+    c = 0  # 70-80分以上数量
+    d = 0  # 60-70分以上数量
+    e = 0  # 60分以下数量
+    score_max = 0
+    score_min = 100
+    score_avg = 0
+    score_sum = 0
+
+    conn = sqlite3.connect('test.db')
+    cur = conn.cursor()
+    sql = 'select * from studentList'
+    cur.execute(sql)
+    data = cur.fetchall()
+
+    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    df = pd.DataFrame(data=data, columns=columns)
+    # 获得分数数据集
+    python_score = df["Python程序设计基础"]
+    math_score = df['高等数学']
+    mean = python_score.mean()  # 获得分数数据集的平均值
+    std = python_score.std()  # 获得分数数据集的标准差
+
+    # 计算分数总和、各分数区间数量统计
+    for i in range(0, len(python_score)):
+        score0 = int(python_score[i])
+        score_sum = score_sum + score0  # 计算分数之和，为求平均数做准备
+        if score0 > score_max:
+            score_max = score0
+        if score0 < score_min:
+            score_min = score0
+        if score0 >= 90:  # 统计90分以上数量
+            a = a + 1
+        elif score0 >= 80:  # 统计80分以上数量
+            b = b + 1
+        elif score0 >= 70:  # 统计70分以上数量
+            c = c + 1
+        elif score0 >= 60:  # 统计60分以上数量
+            d = d + 1
+        else:  # 统计60分以下数量
+            e = e + 1
+
+    score_avg = score_sum / len(python_score)  # 平均分
+    scores = [a, b, c, d, e]  # 分数区间统计
+
+    # 柱形图柱形的宽度
+    bar_width = 0.3
+    # 设定X轴：前两个数字是x轴的起止范围，第三个数字表示步长，步长设定得越小，画出来的正态分布曲线越平滑
+    x = np.arange(0, 100, 1)
+    # 设定Y轴，正态分布函数
+    y = normfun(x, mean, std)
+
+    # 设定柱状图x轴、Y轴数组
+    x3 = np.arange(3)
+    y3 = np.array([score_avg, score_max, score_min])
+
+    # 绘制分数数据集的正态分布曲线和直方图（5分档）
+    plt.subplot(221)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('分数分布(5档)')
+    plt.plot(x, y)
+    plt.hist(python_score, bins=5, rwidth=0.9, density=True)
+    plt.xlabel('分数')
+    plt.ylabel('概率')
+
+    # 绘制分数数据集的散点图，每个点代表一个学生
+    plt.subplot(222)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('Physics vs Math')
+    plt.scatter(python_score, python_score, c='blue', alpha=0.5, label='Python vs Math')
+    plt.xlabel('高等数学')
+    plt.ylabel('Python')
+
+    plt.xlim(60, 100)  # Set x-axis range
+    plt.ylim(60, 100)  # Set y-axis range
+
+    # 绘制柱形图
+    plt.subplot(223)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('分数统计')
+    plt.bar(x3, y3, tick_label=['平均分', '最高分', '最低分'], width=bar_width)
+
+    # 绘制饼状图
+    plt.subplot(224)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.title('分数段饼图')
+    plt.pie(scores, labels=['90分以上', '80-90分', '70-80分', '60-70分', '60分以下'], autopct='%1.1f%%')
+    # 输出四幅图
+    plt.tight_layout()
+
+    # 将图表保存为PNG图片
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    cur.close()
+    conn.close()
+
+    # 将图片编码为base64
+    graph = base64.b64encode(image_png).decode('utf-8')
+
+    return render_template('graph_python.html', graph=graph)
 
 
 if __name__ == '__main__':

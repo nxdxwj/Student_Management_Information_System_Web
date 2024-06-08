@@ -1,0 +1,27 @@
+body {
+            background: url('https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_1280.jpg') no-repeat;
+            background-size: cover;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+}
+
+.box {
+    text-align: center;
+}
+
+h1 {
+    color: whitesmoke;
+    padding: 10px;
+    text-align: center;
+}
+
+img {
+    display: block;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

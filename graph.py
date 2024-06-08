@@ -106,5 +106,7 @@ if __name__ == '__main__':
     plt.title('分数段饼图')
     plt.pie(scores, labels=['90分以上', '80-90分', '70-80分', '60-70分', '60分以下'],autopct='%1.1f%%')
     # 输出四幅图
+    cur.close()
+    conn.close()
 plt.tight_layout()
 plt.show()
