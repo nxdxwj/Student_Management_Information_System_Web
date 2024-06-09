@@ -9,6 +9,12 @@ body {
     margin: 0;
 }
 
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 h1 {
     color: white;
     text-align: center;
