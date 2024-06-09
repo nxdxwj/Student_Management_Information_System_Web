@@ -2,36 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>添加学生信息</title>
+    <title>Add</title>
     <link rel="stylesheet" type="text/css" href="/static/add.css">
 </head>
 <body>
-<h1>添加学生信息</h1>
+<h1>Add Student Information</h1>
 <form action="/add" method="POST">
-    <label for="student_number">学号:</label>
+    <label for="student_number">Id:</label>
     <input type="text" id="id" name="id">
 
-    <label for="student_name">姓名:</label>
+    <label for="student_name">Name:</label>
     <input type="text" id="name" name="name">
 
-    <label for="major">专业:</label>
+    <label for="major">Major:</label>
     <input type="text" id="major" name="major">
 
-    <label for="grade">年级:</label>
+    <label for="grade">Grade:</label>
     <input type="text" id="year" name="year">
 
-    <label for="math_grade">高等数学:</label>
+    <label for="math_grade">Advanced mathematics:</label>
     <input type="text" id="math" name="math">
 
-    <label for="physics_grade">大学物理:</label>
+    <label for="physics_grade">College physics:</label>
     <input type="text" id="physics" name="physics">
 
-    <label for="python_grade">Python程序设计基础:</label>
+    <label for="python_grade">Fundamentals of python programming:</label>
     <input type="text" id="python" name="python">
 
-    <input type="submit" value="提交">
+    <input type="submit" value="submit">
 
-    <a href="http://127.0.0.1:5000/admin" class="btn">返回Admin页面</a>
+    <a href="http://127.0.0.1:5000/admin" class="btn">Return to Admin page</a>
 </form>
 </body>
 </html>

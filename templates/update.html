@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>学生信息展示</title>
+    <title>Student Information Display</title>
     <link rel="stylesheet" type="text/css" href="/static/update.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>Students</h3>
-                <a href="http://127.0.0.1:5000/admin" class="btn">返回Admin页面</a>
+                <a href="http://127.0.0.1:5000/admin" class="btn">Return to Admin page</a>
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
@@ -21,15 +21,15 @@
                             <thead>
                             <tr>
                                 <!-- 表头信息 -->
-                                <th>序号</th>
-                                <th>学号</th>
-                                <th>姓名</th>
-                                <th>专业</th>
-                                <th>年级</th>
-                                <th>高等数学</th>
-                                <th>大学物理</th>
-                                <th>Python程序设计基础</th>
-                                <th>操作</th>
+                                <th>Serial number</th>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Major</th>
+                                <th>Grade</th>
+                                <th>Advanced mathematics</th>
+                                <th>College physics</th>
+                                <th>Fundamentals of python programming</th>
+                                <th>Operation</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -44,7 +44,7 @@
                                     <td id="student_python">{{ student[7] }}</td>
 
                                     <td>
-                                        <button class="update_button" onclick="updateStudent()">更新</button>
+                                        <button class="update_button" onclick="updateStudent()">update</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -78,15 +78,15 @@ function updateStudent() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('学生信息更新成功！');
+            alert('Student information updated successfully!');
             window.location.href = '/display';
         } else {
-            alert('更新学生信息失败。');
+            alert('Failed to update student information!');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('发生错误，请重试。');
+        alert('An error occurred. Please try again.');
     });
 }
 

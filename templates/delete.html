@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>学生信息展示</title>
+    <title>Display student information</title>
     <link rel="stylesheet" type="text/css" href="/static/delete.css">
 </head>
 <body>
@@ -11,22 +11,22 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>Students</h3>
-                <a href="http://127.0.0.1:5000/admin" class="btn">返回Admin页面</a>
+                <a href="http://127.0.0.1:5000/admin" class="btn">Return to admin page</a>
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
                         <tr>
-                            <th>序号</th>
-                            <th>学号</th>
-                            <th>姓名</th>
-                            <th>专业</th>
-                            <th>年级</th>
-                            <th>高等数学</th>
-                            <th>大学物理</th>
-                            <th>Python程序设计基础</th>
-                            <th>操作</th>
+                            <th>Serial number</th>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Major</th>
+                            <th>Grade</th>
+                            <th>Advanced mathematics</th>
+                            <th>College physics</th>
+                            <th>Fundamentals of python programming</th>
+                            <th>Operation</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -36,7 +36,7 @@
                                     <td>{{ j }}</td>
                                 {% endfor %}
                                 <td>
-                                    <button class="delete_button" onclick="deleteStudent({{ i[1] }})">删除</button>
+                                    <button class="delete_button" onclick="deleteStudent({{ i[1] }})">delete</button>
                                 </td>
                             </tr>
                         {% endfor %}

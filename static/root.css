@@ -6,7 +6,7 @@ body {
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: Arial, sans-serif;
+            font-family: "Times New Roman";
         }
 
         #login_box {
@@ -20,11 +20,6 @@ body {
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
-        h2 {
-            color: #ffffff;
-            margin-top: 20px;
-            font-size: 30px;
-        }
 
         h3 {
             color: #ffffff;
@@ -32,7 +27,7 @@ body {
         }
 
         button {
-            margin-top: 35px;
+            margin-top: 43px;
             width: 80%;
             height: 40px;
             border-radius: 5px;
@@ -41,7 +36,6 @@ body {
             text-align: center;
             line-height: 40px;
             font-size: 18px;
-            font-family: '楷体';
             background: linear-gradient(to right, #30cfd0, #330867);
             cursor: pointer;
             transition: background 0.3s;

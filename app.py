@@ -57,7 +57,7 @@ def add():
         db = 'students.db'
         conn = sqlite3.connect(db)
         cur = conn.cursor()
-        sql = 'insert into studentList(学号,姓名,专业,年级,高等数学,大学物理,Python程序设计基础) values (?,?,?,?,?,?,?)'
+        sql = 'insert into studentList(id,name,major,year,AdvancedMath,CollegePhysics,PythonProgramming) values (?,?,?,?,?,?,?)'
         cur.execute(sql, (id, name, major, year, math, physics, python))
         conn.commit()
         cur.close()
@@ -74,7 +74,7 @@ def search():
         db = 'students.db'
         conn = sqlite3.connect(db)
         cur = conn.cursor()
-        sql = 'select * from studentList where 学号=? '
+        sql = 'select * from studentList where id=? '
         cur.execute(sql, (id,))
         data = cur.fetchall()
         cur.close()
@@ -110,7 +110,7 @@ def delete_student():
             db = 'students.db'
             conn = sqlite3.connect(db)
             cur = conn.cursor()
-            sql = 'DELETE FROM studentList WHERE 学号 = ?'  # 使用学生ID来编写DELETE SQL语句
+            sql = 'DELETE FROM studentList WHERE id = ?'  # 使用学生ID来编写DELETE SQL语句
             cur.execute(sql, (student_id,))
             conn.commit()
             cur.close()
@@ -130,7 +130,7 @@ def update():
         db = 'students.db'
         conn = sqlite3.connect(db)
         cur = conn.cursor()
-        sql = 'select * from studentList where 学号=? '
+        sql = 'select * from studentList where id=? '
         cur.execute(sql, (id,))
         data = cur.fetchall()
         cur.close()
@@ -155,7 +155,7 @@ def update_student():
             db = 'students.db'
             conn = sqlite3.connect(db)
             cur = conn.cursor()
-            sql = 'update studentList set 姓名=?, 专业=?, 年级=?, 高等数学=?, 大学物理=?, Python程序设计基础=? where 学号=?'
+            sql = 'update studentList set name=?, major=?, year=?, AdvancedMath=?, CollegePhysics=?, PythonProgramming=? where id=?'
             cur.execute(sql, (name, major, year, math, physics, python, id))
             conn.commit()
             cur.close()
@@ -179,9 +179,9 @@ def sort_math():
     sql = 'select * from studentList'
     cur.execute(sql)
     data = cur.fetchall()
-    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    columns = ["order", "id", "name", "major", "year", "math", "physics", "python"]
     df = pd.DataFrame(data=data, columns=columns)
-    df.sort_values(by="高等数学", ascending=False, inplace=True)
+    df.sort_values(by="math", ascending=False, inplace=True)
     data = df.values.tolist()
 
     cur.close()
@@ -196,9 +196,9 @@ def sort_physics():
     sql = 'select * from studentList'
     cur.execute(sql)
     data = cur.fetchall()
-    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    columns = ["order", "id", "name", "major", "year", "math", "physics", "python"]
     df = pd.DataFrame(data=data, columns=columns)
-    df.sort_values(by="大学物理", ascending=False, inplace=True)
+    df.sort_values(by="physics", ascending=False, inplace=True)
     data = df.values.tolist()
 
     cur.close()
@@ -213,9 +213,9 @@ def sort_python():
     sql = 'select * from studentList'
     cur.execute(sql)
     data = cur.fetchall()
-    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    columns = ["order", "id", "name", "major", "year", "math", "physics", "python"]
     df = pd.DataFrame(data=data, columns=columns)
-    df.sort_values(by="Python程序设计基础", ascending=False, inplace=True)
+    df.sort_values(by="python", ascending=False, inplace=True)
     data = df.values.tolist()
 
     cur.close()
@@ -252,11 +252,11 @@ def graph_math():
     cur.execute(sql)
     data = cur.fetchall()
 
-    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    columns = ["order", "id", "name", "major", "year", "math", "physics", "python"]
     df = pd.DataFrame(data=data, columns=columns)
 
-    math_score = df['高等数学']  # 获得分数数据集
-    physics_score = df['大学物理']
+    math_score = df['math']  # 获得分数数据集
+    physics_score = df['physics']
     mean = math_score.mean()  # 获得分数数据集的平均值
     std = math_score.std()  # 获得分数数据集的标准差
 
@@ -307,8 +307,8 @@ def graph_math():
     plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.title('Physics vs Math')
     plt.scatter(physics_score, math_score, c='blue', alpha=0.5, label='Physics vs Math')
-    plt.xlabel('大学物理')
-    plt.ylabel('高等数学')
+    plt.xlabel('physics')
+    plt.ylabel('math')
 
     plt.xlim(60, 100)  # Set x-axis range
     plt.ylim(60, 100)  # Set y-axis range
@@ -362,11 +362,11 @@ def graph_physics():
     cur.execute(sql)
     data = cur.fetchall()
 
-    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    columns = ["order", "id", "name", "major", "year", "math", "physics", "python"]
     df = pd.DataFrame(data=data, columns=columns)
     # 获得分数数据集
-    physics_score = df['大学物理']
-    python_score = df["Python程序设计基础"]
+    physics_score = df['physics']
+    python_score = df["python"]
     mean = physics_score.mean()  # 获得分数数据集的平均值
     std = physics_score.std()  # 获得分数数据集的标准差
 
@@ -418,7 +418,7 @@ def graph_physics():
     plt.title('Physics vs Math')
     plt.scatter(physics_score, python_score, c='blue', alpha=0.5, label='Physics vs Python')
     plt.xlabel('Python')
-    plt.ylabel('大学物理')
+    plt.ylabel('Math')
 
     plt.xlim(60, 100)  # Set x-axis range
     plt.ylim(60, 100)  # Set y-axis range
@@ -472,11 +472,11 @@ def graph_python():
     cur.execute(sql)
     data = cur.fetchall()
 
-    columns = ["序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"]
+    columns = ["order", "id", "name", "major", "year", "math", "physics", "python"]
     df = pd.DataFrame(data=data, columns=columns)
     # 获得分数数据集
-    python_score = df["Python程序设计基础"]
-    math_score = df['高等数学']
+    python_score = df["python"]
+    math_score = df['math']
     mean = python_score.mean()  # 获得分数数据集的平均值
     std = python_score.std()  # 获得分数数据集的标准差
 
@@ -527,7 +527,7 @@ def graph_python():
     plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.title('Physics vs Math')
     plt.scatter(python_score, python_score, c='blue', alpha=0.5, label='Python vs Math')
-    plt.xlabel('高等数学')
+    plt.xlabel('Math')
     plt.ylabel('Python')
 
     plt.xlim(60, 100)  # Set x-axis range
