@@ -25,7 +25,9 @@ def normfun(x, mu, sigma):   #定义正态密度函数
 
 
 if __name__ == '__main__':
-    conn = sqlite3.connect('test.db')
+    plt.figure(figsize=(10,10))
+
+    conn = sqlite3.connect('students.db')
     cur = conn.cursor()
     sql = 'select * from studentList'
     cur.execute(sql)

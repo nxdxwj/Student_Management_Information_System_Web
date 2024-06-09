@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from io import BytesIO
 import base64
-from scipy.stats import norm
 
 app = Flask(__name__)
 
@@ -33,7 +32,7 @@ def admin():
 
 @app.route('/display')
 def display():
-    db = 'test.db'
+    db = 'students.db'
     conn = sqlite3.connect(db)
     cur = conn.cursor()
     sql = 'SELECT * FROM studentList'
@@ -55,7 +54,7 @@ def add():
         physics = int(request.form['physics'])
         python = int(request.form['python'])
 
-        db = 'test.db'
+        db = 'students.db'
         conn = sqlite3.connect(db)
         cur = conn.cursor()
         sql = 'insert into studentList(学号,姓名,专业,年级,高等数学,大学物理,Python程序设计基础) values (?,?,?,?,?,?,?)'
@@ -72,7 +71,7 @@ def search():
     if request.method == 'POST':
         id = int(request.form['id'])
 
-        db = 'test.db'
+        db = 'students.db'
         conn = sqlite3.connect(db)
         cur = conn.cursor()
         sql = 'select * from studentList where 学号=? '
@@ -87,7 +86,7 @@ def search():
 
 @app.route('/delete', methods=['GET', 'POST'])
 def delete():
-    db = 'test.db'
+    db = 'students.db'
     conn = sqlite3.connect(db)
     cur = conn.cursor()
     sql = 'SELECT * FROM studentList'
@@ -108,7 +107,7 @@ def delete_student():
             return jsonify({'success': False, 'error': 'Invalid student_id format'})  # 如果转换失败则返回错误响应
 
         if student_id:
-            db = 'test.db'
+            db = 'students.db'
             conn = sqlite3.connect(db)
             cur = conn.cursor()
             sql = 'DELETE FROM studentList WHERE 学号 = ?'  # 使用学生ID来编写DELETE SQL语句
@@ -128,7 +127,7 @@ def update():
     if request.method == 'POST':
         id = int(request.form['id'])
 
-        db = 'test.db'
+        db = 'students.db'
         conn = sqlite3.connect(db)
         cur = conn.cursor()
         sql = 'select * from studentList where 学号=? '
@@ -153,7 +152,7 @@ def update_student():
         python = int(request.json.get('student_python'))
 
         if id:
-            db = 'test.db'
+            db = 'students.db'
             conn = sqlite3.connect(db)
             cur = conn.cursor()
             sql = 'update studentList set 姓名=?, 专业=?, 年级=?, 高等数学=?, 大学物理=?, Python程序设计基础=? where 学号=?'
@@ -174,7 +173,7 @@ def sort():
 
 @app.route('/sort/sort_math')
 def sort_math():
-    db = 'test.db'
+    db = 'students.db'
     conn = sqlite3.connect(db)
     cur = conn.cursor()
     sql = 'select * from studentList'
@@ -191,7 +190,7 @@ def sort_math():
 
 @app.route('/sort/sort_physics')
 def sort_physics():
-    db = 'test.db'
+    db = 'students.db'
     conn = sqlite3.connect(db)
     cur = conn.cursor()
     sql = 'select * from studentList'
@@ -208,7 +207,7 @@ def sort_physics():
 
 @app.route('/sort/sort_python')
 def sort_python():
-    db = 'test.db'
+    db = 'students.db'
     conn = sqlite3.connect(db)
     cur = conn.cursor()
     sql = 'select * from studentList'
@@ -234,6 +233,8 @@ def normfun(x, mu, sigma):
 
 @app.route('/graph/graph_math')
 def graph_math():
+    plt.clf()     #清除原来matplotlib样式
+    plt.figure(figsize=(9.5,7.5))
     # 声明变量
     a = 0  # 90分以上数量
     b = 0  # 80-90分以上数量
@@ -245,7 +246,7 @@ def graph_math():
     score_avg = 0
     score_sum = 0
 
-    conn = sqlite3.connect('test.db')
+    conn = sqlite3.connect('students.db')
     cur = conn.cursor()
     sql = 'select * from studentList'
     cur.execute(sql)
@@ -342,6 +343,8 @@ def graph_math():
 
 @app.route('/graph/graph_physics')
 def graph_physics():
+    plt.clf()
+    plt.figure(figsize=(9.5, 7.5))
     # 声明变量
     a = 0  # 90分以上数量
     b = 0  # 80-90分以上数量
@@ -353,7 +356,7 @@ def graph_physics():
     score_avg = 0
     score_sum = 0
 
-    conn = sqlite3.connect('test.db')
+    conn = sqlite3.connect('students.db')
     cur = conn.cursor()
     sql = 'select * from studentList'
     cur.execute(sql)
@@ -450,6 +453,8 @@ def graph_physics():
 
 @app.route('/graph/graph_python')
 def graph_python():
+    plt.clf()
+    plt.figure(figsize=(9.5, 7.5))
     # 声明变量
     a = 0  # 90分以上数量
     b = 0  # 80-90分以上数量
@@ -461,7 +466,7 @@ def graph_python():
     score_avg = 0
     score_sum = 0
 
-    conn = sqlite3.connect('test.db')
+    conn = sqlite3.connect('students.db')
     cur = conn.cursor()
     sql = 'select * from studentList'
     cur.execute(sql)
