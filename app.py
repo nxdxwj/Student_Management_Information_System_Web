@@ -305,7 +305,7 @@ def graph_math():
     # 绘制分数数据集的散点图，每个点代表一个学生
     plt.subplot(222)
     plt.rcParams['font.sans-serif'] = ['SimHei']
-    plt.title('Physics vs Math')
+    plt.title('Math vs Physics')
     plt.scatter(physics_score, math_score, c='blue', alpha=0.5, label='Physics vs Math')
     plt.xlabel('physics')
     plt.ylabel('math')
@@ -415,10 +415,10 @@ def graph_physics():
     # 绘制分数数据集的散点图，每个点代表一个学生
     plt.subplot(222)
     plt.rcParams['font.sans-serif'] = ['SimHei']
-    plt.title('Physics vs Math')
+    plt.title('Physics vs Python')
     plt.scatter(physics_score, python_score, c='blue', alpha=0.5, label='Physics vs Python')
     plt.xlabel('Python')
-    plt.ylabel('Math')
+    plt.ylabel('Physics')
 
     plt.xlim(60, 100)  # Set x-axis range
     plt.ylim(60, 100)  # Set y-axis range
@@ -525,7 +525,7 @@ def graph_python():
     # 绘制分数数据集的散点图，每个点代表一个学生
     plt.subplot(222)
     plt.rcParams['font.sans-serif'] = ['SimHei']
-    plt.title('Physics vs Math')
+    plt.title('Python vs Math')
     plt.scatter(python_score, python_score, c='blue', alpha=0.5, label='Python vs Math')
     plt.xlabel('Math')
     plt.ylabel('Python')
